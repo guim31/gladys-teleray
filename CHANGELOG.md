@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-29
+
 ### Added
 
 - One device per Téléray station of the ASNR: ambient gamma dose rate, 24-hour
@@ -25,3 +27,6 @@ the notes of the version's GitHub Release.
 - Dashboard widget "Téléray dose rate": tiles, 24-hour curve with the
   background, time and state of the measurement.
 - Feature names and texts in English, French, German and Spanish.
+
+[Unreleased]: https://github.com/guim31/gladys-teleray/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/guim31/gladys-teleray/releases/tag/v1.0.0
