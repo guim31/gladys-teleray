@@ -85,7 +85,10 @@ const finite = (value) => (typeof value === 'number' && Number.isFinite(value) ?
  */
 export function parseStation(feature) {
   const p = feature?.properties ?? {};
-  const [lon, lat] = feature?.geometry?.coordinates ?? [];
+  // Some stations carry their point as an object { "0": lon, "1": lat } (BASTIA, MENDE...).
+  const point = feature?.geometry?.coordinates;
+  const lon = point?.[0];
+  const lat = point?.[1];
   if (!Number.isInteger(p.irsnId) || typeof p.name !== 'string' || p.name === '') {
     return null;
   }

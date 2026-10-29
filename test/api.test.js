@@ -1,6 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { USER_AGENT, distanceKm, fetchMeasures, fetchStations, parseMeasure } from '../src/api.js';
+import {
+  USER_AGENT,
+  distanceKm,
+  fetchMeasures,
+  fetchStations,
+  parseMeasure,
+  parseStation,
+} from '../src/api.js';
 import { TOULOUSE, apiFixture, createNetwork } from './helpers/network.js';
 
 test('a recorded station list: number, names, position, spectrometers', async () => {
@@ -17,6 +24,14 @@ test('a recorded station list: number, names, position, spectrometers', async ()
     spectrometer: false,
   });
   assert.equal(stations.find((s) => s.id === 6001).spectrometer, true);
+  // Recorded as { "0": lon, "1": lat } instead of an array.
+  const bastia = stations.find((s) => s.id === 1347);
+  assert.equal(bastia.latitude, 42.703091);
+  assert.equal(bastia.longitude, 9.4472723);
+  assert.equal(
+    parseStation({ properties: { irsnId: 1, name: 'X' }, geometry: null }).latitude,
+    null,
+  );
   assert.equal(network.calls[0].headers['User-Agent'], USER_AGENT);
 });
 

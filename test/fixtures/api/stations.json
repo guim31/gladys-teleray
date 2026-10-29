@@ -288,9 +288,41 @@
         "validated": true
       },
       "_id": "681b5798ed2931b0f157821f"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "coordinates": { "0": 9.4472723, "1": 42.703091 }, "type": "Point" },
+      "properties": {
+        "irsnId": 1347,
+        "name": "BASTIA_2B_AGG_CP",
+        "owner": "IRSN",
+        "publicName": "BASTIA",
+        "reseau": "TELERAY",
+        "statut": "FIXE",
+        "strategie": "NATIONAL",
+        "type": "Compteur_Proportionnel",
+        "validated": true
+      },
+      "_id": "6a46289d10967225a67f46ee"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "coordinates": { "0": 3.4979529, "1": 44.51775 }, "type": "Point" },
+      "properties": {
+        "irsnId": 1387,
+        "name": "MENDE_48_AGG_CP",
+        "owner": "IRSN",
+        "publicName": "MENDE",
+        "reseau": "TELERAY",
+        "statut": "FIXE",
+        "strategie": "NATIONAL",
+        "type": "Compteur_Proportionnel",
+        "validated": true
+      },
+      "_id": "69c2943b7a770a144e676163"
     }
   ],
-  "total": 18,
+  "total": 20,
   "skip": 0,
   "limit": 600
 }
