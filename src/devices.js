@@ -43,9 +43,12 @@ export function idsOf(gladys, station) {
   return gladys.externalIds('station', String(station.id));
 }
 
-/** The device name: the public name of the station, and the network. */
+/**
+ * The device name: the public name of the station, and the network. A gamma
+ * spectrometer shares its public name with the counter of the same site.
+ */
 export function deviceName(station) {
-  return `${station.publicName} (Téléray)`;
+  return `${station.publicName}${station.spectrometer ? ' γ' : ''} (Téléray)`;
 }
 
 /**

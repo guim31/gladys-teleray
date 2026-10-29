@@ -185,7 +185,7 @@
           },
           "description": {
             "en": "Empty: any station.",
-            "fr": "Vide : n'importe quelle balise.",
+            "fr": "Vide : n’importe quelle balise.",
             "de": "Leer: jede Sonde.",
             "es": "Vacío: cualquier baliza."
           },
@@ -309,10 +309,10 @@
         "es": "Tasa de dosis de nuevo normal"
       },
       "description": {
-        "en": "After a \"Dose rate above background\", the dose rate is less than 20 nSv/h above the background again.",
-        "fr": "Après un « Débit de dose au-dessus du bruit de fond », le débit est de nouveau à moins de 20 nSv/h du bruit de fond.",
-        "de": "Nach einer „Dosisleistung über dem Untergrund“ liegt die Dosisleistung wieder weniger als 20 nSv/h über dem Untergrund.",
-        "es": "Tras una «Tasa de dosis por encima del fondo», la tasa vuelve a estar a menos de 20 nSv/h del fondo."
+        "en": "After a \"Dose rate above background\", the dose rate is less than 10 nSv/h above the background again.",
+        "fr": "Après un « Débit de dose au-dessus du bruit de fond », le débit est de nouveau à moins de 10 nSv/h du bruit de fond.",
+        "de": "Nach einer „Dosisleistung über dem Untergrund“ liegt die Dosisleistung wieder weniger als 10 nSv/h über dem Untergrund.",
+        "es": "Tras una «Tasa de dosis por encima del fondo», la tasa vuelve a estar a menos de 10 nSv/h del fondo."
       },
       "fields": [
         {
@@ -327,7 +327,7 @@
           },
           "description": {
             "en": "Empty: any station.",
-            "fr": "Vide : n'importe quelle balise.",
+            "fr": "Vide : n’importe quelle balise.",
             "de": "Leer: jede Sonde.",
             "es": "Vacío: cualquier baliza."
           },

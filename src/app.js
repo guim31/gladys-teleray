@@ -44,14 +44,26 @@ export function registerHandlers(gladys, { store = new Store(), fetch, timers = 
   /** Daily: the station list, and the followed stations it resolves. */
   async function beforeCycle() {
     await hub.refreshNetwork();
+    if (config.stations.length === 0 && hub.followed.length === 0) {
+      // No located house at start (or Gladys failed to answer): asked again.
+      await readHouses();
+    }
     hub.resolve(houses, config);
     const key = hub.followed.map((s) => s.id).join(',');
     if (key !== followedKey) {
-      followedKey = key;
       hub.prune();
       await publishDevices();
+      // Only once published: a failed publication is tried again next cycle.
+      followedKey = key;
       logFollowed();
     }
+  }
+
+  async function readHouses() {
+    houses = await gladys.getHouses().catch((err) => {
+      logger.warn(`Cannot read the houses: ${err.message}`);
+      return houses;
+    });
   }
 
   /** Publish what the reads changed: /data, status, widget. */
@@ -103,10 +115,7 @@ export function registerHandlers(gladys, { store = new Store(), fetch, timers = 
   async function start() {
     await ready;
     if (config.stations.length === 0) {
-      houses = await gladys.getHouses().catch((err) => {
-        logger.warn(`Cannot read the houses: ${err.message}`);
-        return [];
-      });
+      await readHouses();
     }
     followedKey = null;
     await poller.restart();
@@ -157,7 +166,10 @@ export function registerHandlers(gladys, { store = new Store(), fetch, timers = 
   }
   gladys.onDeviceCreated(onDeviceAdded);
   gladys.onDeviceUpdated(onDeviceAdded);
-  gladys.onDeviceDeleted(async () => {
+  gladys.onDeviceDeleted(async (device) => {
+    await ready;
+    hub.forgetDevice(device.external_id);
+    await hub.save();
     gladys.requestWidgetRefresh(WIDGET_KEY);
   });
 

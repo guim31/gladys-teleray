@@ -10,6 +10,7 @@ import { HOUSE, START, createAll, createWorld, deviceId, featureId } from './hel
 import { TOULOUSE, apiFixture, measure, shifted } from './helpers/network.js';
 import { MemoryStore } from '../src/store.js';
 import { PERIOD_MS } from '../src/poller.js';
+import { REVALIDATE_MS } from '../src/hub.js';
 
 const TLSE = 1411;
 const MIN = 60_000;
@@ -73,7 +74,8 @@ test('the container reads by itself every 10 minutes, asking only for what is ne
   await new Promise((resolve) => setImmediate(resolve));
   const calls = w.network.measureCalls(TOULOUSE);
   assert.equal(calls.length, 2, 'read by the timer, no onPoll');
-  assert.equal(since(calls[1]), newest - PERIOD_MS + 1000);
+  // The last 3 hours are asked again: the ASNR validates afterwards.
+  assert.equal(since(calls[1]), newest - PERIOD_MS - REVALIDATE_MS);
   w.app.stop();
 });
 
@@ -86,7 +88,10 @@ test('a restart asks only for the measurements after the saved ones', async () =
 
   const again = await createWorld({ store, devices: w.gladys.devices });
   const call = again.network.measureCalls(TOULOUSE)[0];
-  assert.equal(Date.parse(new URL(call.url).searchParams.get('time[$gte]')), saved.at(-1).t + 1000);
+  assert.equal(
+    Date.parse(new URL(call.url).searchParams.get('time[$gte]')),
+    saved.at(-1).t - REVALIDATE_MS,
+  );
   assert.equal(again.network.stationCalls(), 0, 'the station list is a day old at most');
 });
 
@@ -94,7 +99,7 @@ test('stations typed by number and name; unknown ones are said in the status', a
   const w = await createWorld({ config: { stations: 'toulouse; 6001, Nulle-Part' } });
   assert.deepEqual(
     w.gladys.fake.discoveredDevices.map((d) => d.name),
-    ['TOULOUSE (Téléray)', 'TRICASTIN (Téléray)'],
+    ['TOULOUSE (Téléray)', 'TRICASTIN γ (Téléray)'],
   );
   assert.equal(w.gladys.fake.discoveredDevices[1].model, 'Téléray γ spectrometer');
   const status = w.gladys.fake.connectionStatus;
@@ -241,4 +246,70 @@ test('the nearby search lists the closest stations with their number', async () 
   const failed = await none.gladys.fake.action('find_nearby', {});
   assert.equal(failed.success, false);
   assert.match(failed.error, /Settings → Houses/);
+});
+
+test('a measurement validated or invalidated afterwards is read again', async () => {
+  const t0 = START + 10 * MIN;
+  const label = { value: 'NV' };
+  const w = await createWorld({
+    network: {
+      measures: {
+        [TOULOUSE]: (now) => toulouseWith([{ t: t0, raw: 300, label: label.value }])(now),
+      },
+    },
+  });
+  await createAll(w);
+  w.advance(10 * MIN);
+  await w.app.poller.cycle();
+  const status = () => w.gladys.fake.lastState(featureId(w.gladys, TLSE, 'status'));
+  assert.equal(status(), 'Pas encore validée');
+  label.value = 'NVA';
+  w.advance(10 * MIN);
+  await w.app.poller.cycle();
+  assert.equal(status(), 'Mesure invalidée');
+  assert.equal(w.hub.records.get(TLSE).measures.at(-1).label, 'NVA');
+});
+
+test('a measurement dated in the future is dropped', async () => {
+  const w = await createWorld();
+  w.network.measures[TOULOUSE] = () => {
+    const base = shifted('measures-toulouse-24h', START);
+    return [...base, measure(base.at(-1), START + 365 * 24 * 60 * MIN, 99)];
+  };
+  await createAll(w);
+  assert.ok(w.hub.records.get(TLSE).measures.at(-1).t <= START);
+  assert.equal(w.gladys.fake.lastState(featureId(w.gladys, TLSE, 'dose_rate')), 102);
+});
+
+test('a device deleted then added again: a first look, no stale "back to normal"', async () => {
+  const t0 = START + 10 * MIN;
+  const w = await createWorld({
+    network: {
+      measures: {
+        [TOULOUSE]: toulouseWith([
+          { t: t0, raw: 140 },
+          { t: t0 + 10 * MIN, raw: 95 },
+        ]),
+      },
+    },
+  });
+  await createAll(w);
+  w.advance(10 * MIN);
+  await w.app.poller.cycle();
+  assert.equal(w.gladys.fake.sceneEvents.length, 2);
+  const device = w.gladys.devices[0];
+  await w.gladys.fake.deviceDeleted(device);
+  assert.equal(w.hub.records.get(TLSE).excess, null);
+  w.advance(10 * MIN);
+  await w.gladys.fake.deviceCreated(device);
+  assert.equal(w.gladys.fake.sceneEvents.length, 2);
+});
+
+test('a located house set after the start is used at the next cycle', async () => {
+  const w = await createWorld({ houses: [{ ...HOUSE, latitude: null, longitude: null }] });
+  assert.equal(w.gladys.fake.discoveredDevices.length, 0);
+  w.gladys.fake.houses.splice(0, 1, HOUSE);
+  w.advance(PERIOD_MS);
+  await w.app.poller.cycle();
+  assert.equal(w.gladys.fake.discoveredDevices.length, 1);
 });

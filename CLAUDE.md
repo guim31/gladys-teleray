@@ -282,3 +282,8 @@ Relevé sur la carte publique le 29/10/2026 (captures dans `test/fixtures/api/`)
   mentions légales du site citent la source « ASNR ». Charge : une requête par balise toutes les 10 min, la liste une
   fois par jour, `User-Agent` explicite.
 - Faux Gladys du SDK : l'ack d'un widget enveloppe le contenu dans `data.content`.
+- La validité d'une mesure change après coup (NV → VA ou NVA) : chaque lecture redemande les 3 dernières heures
+  (`REVALIDATE_MS`) et remplace par date. Une mesure datée de plus de 15 min dans le futur est jetée (elle figerait
+  la balise). Douze sites nucléaires ont un compteur et un spectromètre sous le même `publicName` (CHINON 1144 et 6006) : le nom désigne le compteur, le numéro l'autre ; le spectromètre porte « γ » dans son nom d'appareil.
+- Quatre balises de la liste réelle ont leurs coordonnées en objet `{ "0": lon, "1": lat }` (BASTIA, MENDE, MEYSSE,
+  ROUSSY-LE-VILLAGE) : vu seulement en lançant l'image contre la vraie carte.

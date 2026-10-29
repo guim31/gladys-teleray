@@ -57,7 +57,7 @@ added), and two switches to hide the curve or the time and state.
   the chosen margin (+20, +40, +100 or +200 nSv/h). Fired once when the margin is crossed; the margin stays reached
   until the dose rate falls 10 nSv/h below it. +40 nSv/h is the threshold of the ASNR map. Variables: station name,
   dose rate, background, excess, measurement time.
-- Trigger **Dose rate back to normal**: after an exceedance, the dose rate is less than 20 nSv/h above the background
+- Trigger **Dose rate back to normal**: after an exceedance, the dose rate is less than 10 nSv/h above the background
   again.
 - Action **Get the dose rate of a station**: the last values and a ready-made sentence (`summary`) for a
   notification.

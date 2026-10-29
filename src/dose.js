@@ -130,18 +130,27 @@ export function trim(measures) {
 }
 
 /**
- * Merge new measurements into a sorted list (by time, one per time).
- * @returns {{ measures: Array, added: number }}
+ * Merge measurements into a sorted list (by time, one per time). A known time
+ * is replaced: the ASNR validates (or invalidates) a measurement afterwards.
+ * @returns {{ measures: Array, added: number, changed: number }}
  */
 export function merge(measures, incoming) {
   const byTime = new Map(measures.map((m) => [m.t, m]));
   let added = 0;
+  let changed = 0;
   for (const m of incoming) {
-    if (!byTime.has(m.t)) {
+    const known = byTime.get(m.t);
+    if (!known) {
       added += 1;
+    } else if (
+      known.raw !== m.raw ||
+      known.label !== m.label ||
+      known.background !== m.background
+    ) {
+      changed += 1;
     }
     byTime.set(m.t, m);
   }
   const sorted = [...byTime.values()].sort((a, b) => a.t - b.t);
-  return { measures: trim(sorted), added };
+  return { measures: trim(sorted), added, changed };
 }

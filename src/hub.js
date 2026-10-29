@@ -39,6 +39,12 @@ const logger = createLogger({ name: 'stations' });
 /** The station list is read again after this long. */
 export const STATIONS_MAX_AGE_MS = DAY_MS;
 
+/** The last measurements are asked again this far back: their validity may have changed. */
+export const REVALIDATE_MS = 3 * 60 * 60 * 1000;
+
+/** A measurement dated further in the future is dropped (a wrong clock would freeze the station). */
+const FUTURE_MS = 15 * 60_000;
+
 /** An unchanged value is published again this often (Gladys: "no recent value" past 48 h). */
 export const STATE_HEARTBEAT_MS = 6 * 60 * 60 * 1000;
 
@@ -97,7 +103,14 @@ export class Hub {
       return;
     }
     if (Array.isArray(data.network?.list)) {
-      this.network = { list: data.network.list, fetchedAt: Number(data.network.fetchedAt) || 0 };
+      const list = data.network.list.filter(
+        (s) =>
+          s &&
+          Number.isInteger(s.id) &&
+          typeof s.name === 'string' &&
+          typeof s.publicName === 'string',
+      );
+      this.network = { list, fetchedAt: Number(data.network.fetchedAt) || 0 };
     }
     for (const record of data.records ?? []) {
       if (record && Number.isInteger(record.id) && Array.isArray(record.measures)) {
@@ -159,11 +172,13 @@ export class Hub {
       return list.find((s) => s.id === Number(token)) ?? null;
     }
     const wanted = normalize(token);
-    const exact = list.find(
-      (s) => normalize(s.publicName) === wanted || normalize(s.name) === wanted,
-    );
-    if (exact) {
-      return exact;
+    // A nuclear site has a counter and a spectrometer under the same public
+    // name (CHINON 1144 and 6006): the name gives the counter, the number the other.
+    const exact = list
+      .filter((s) => normalize(s.publicName) === wanted || normalize(s.name) === wanted)
+      .sort((a, b) => Number(a.spectrometer) - Number(b.spectrometer));
+    if (exact.length > 0) {
+      return exact[0];
     }
     const partial = list.filter((s) => normalize(s.publicName).startsWith(wanted));
     return partial.length === 1 ? partial[0] : null;
@@ -255,7 +270,7 @@ export class Hub {
   async refresh(station) {
     const record = this.recordOf(station);
     const last = latest(record);
-    const since = Math.max(last ? last.t + 1000 : 0, this.now() - DAY_MS);
+    const since = Math.max(last ? last.t - REVALIDATE_MS : 0, this.now() - DAY_MS);
     let incoming;
     try {
       incoming = await fetchMeasures(station.name, since, this.deps);
@@ -266,25 +281,27 @@ export class Hub {
       this.lastResults.set(station.id, { ok: false, at: this.now() });
       throw err;
     }
-    const before = stationStatus(record, this.now());
-    const { measures, added } = merge(record.measures, incoming);
+    const valid = incoming.filter((m) => m.t <= this.now() + FUTURE_MS);
+    const { measures, added, changed } = merge(record.measures, valid);
     record.measures = measures;
-    if (added > 0) {
+    if (added > 0 || changed > 0) {
       this.persistNeeded = true;
       this.widgetChanged = true;
     }
-    const after = stationStatus(record, this.now());
-    if (before !== after) {
+    const status = stationStatus(record, this.now());
+    if (status !== record.status) {
       this.widgetChanged = true;
-      if (after === STATUS.NO_RECENT) {
+      this.persistNeeded = true;
+      // The first look at a station already silent is said too: once.
+      if (status === STATUS.NO_RECENT) {
         this.issues.fail(
           `silent:${station.id}`,
           `${deviceName(station)}: no measurement for 2 hours`,
         );
+      } else {
+        this.issues.ok(`silent:${station.id}`, `${deviceName(station)}: measurements again`);
       }
-    }
-    if (after !== STATUS.NO_RECENT) {
-      this.issues.ok(`silent:${station.id}`, `${deviceName(station)}: measurements again`);
+      record.status = status;
     }
     this.watchExcess(record);
     try {
@@ -401,8 +418,24 @@ export class Hub {
     this.pendingEvents.delete(station.id);
   }
 
-  /** Forget the records of the stations no longer followed. */
+  /** A device deleted from Gladys: its threshold state is forgotten (a first look once added again). */
+  forgetDevice(externalId) {
+    const station = this.stationByDevice(externalId);
+    const record = station && this.records.get(station.id);
+    if (record && record.excess !== null) {
+      record.excess = null;
+      this.persistNeeded = true;
+    }
+    if (station) {
+      this.pendingEvents.delete(station.id);
+    }
+  }
+
+  /** Forget the records of the stations no longer followed (never without a station list). */
   prune() {
+    if (this.network.list.length === 0) {
+      return;
+    }
     const kept = new Set(this.followed.map((s) => s.id));
     for (const id of this.records.keys()) {
       if (!kept.has(id)) {

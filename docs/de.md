@@ -60,7 +60,7 @@ und zwei Schalter, um die Kurve oder Zeit und Zustand auszublenden.
   Abstand bleibt erreicht, bis die Dosisleistung 10 nSv/h darunter fällt. +40 nSv/h ist die Schwelle der ASNR-Karte.
   Variablen: Name der Sonde, Dosisleistung, Untergrund, Überschreitung, Messzeit.
 - Auslöser **Dosisleistung wieder normal**: Nach einer Überschreitung liegt die Dosisleistung wieder weniger als
-  20 nSv/h über dem Untergrund.
+  10 nSv/h über dem Untergrund.
 - Aktion **Dosisleistung einer Sonde abrufen**: die letzten Werte und ein fertiger Satz (`summary`) für eine
   Benachrichtigung.
 

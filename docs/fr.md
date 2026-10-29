@@ -59,7 +59,7 @@ première ajoutée), et deux interrupteurs pour masquer la courbe ou l’heure e
   reste atteinte tant que le débit ne redescend pas 10 nSv/h en dessous. +40 nSv/h est le seuil de la carte de
   l’ASNR. Variables : nom de la balise, débit de dose, bruit de fond, dépassement, heure de la mesure.
 - Déclencheur **Débit de dose revenu à la normale** : après un dépassement, le débit est de nouveau à moins de
-  20 nSv/h du bruit de fond.
+  10 nSv/h du bruit de fond.
 - Action **Obtenir le débit de dose d’une balise** : les dernières valeurs et une phrase toute faite (`summary`) pour
   une notification.
 

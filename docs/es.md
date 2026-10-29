@@ -58,7 +58,7 @@ añadida), y dos interruptores para ocultar la curva o la hora y el estado.
   el margen elegido (+20, +40, +100 o +200 nSv/h). Se activa una vez al superarlo; el margen sigue alcanzado mientras
   la tasa no baje 10 nSv/h por debajo. +40 nSv/h es el umbral del mapa de la ASNR. Variables: nombre de la baliza,
   tasa de dosis, fondo, exceso, hora de la medición.
-- Disparador **Tasa de dosis de nuevo normal**: tras un exceso, la tasa vuelve a estar a menos de 20 nSv/h del fondo.
+- Disparador **Tasa de dosis de nuevo normal**: tras un exceso, la tasa vuelve a estar a menos de 10 nSv/h del fondo.
 - Acción **Obtener la tasa de dosis de una baliza**: los últimos valores y una frase lista (`summary`) para una
   notificación.
 
