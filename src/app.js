@@ -60,10 +60,13 @@ export function registerHandlers(gladys, { store = new Store(), fetch, timers = 
   }
 
   async function readHouses() {
-    houses = await gladys.getHouses().catch((err) => {
-      logger.warn(`Cannot read the houses: ${err.message}`);
-      return houses;
-    });
+    try {
+      houses = await gladys.getHouses();
+      hub.issues.ok('houses', 'The houses of Gladys are read again');
+    } catch (err) {
+      // Asked every cycle while no station is followed: said once.
+      hub.issues.fail('houses', `Cannot read the houses: ${err.message}`);
+    }
   }
 
   /** Publish what the reads changed: /data, status, widget. */
