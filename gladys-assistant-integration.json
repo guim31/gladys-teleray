@@ -1,177 +1,527 @@
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Demo Devices Template",
+  "name": "Téléray",
   "description": {
-    "en": "Starter template showing sensors, a switch, a dimmable light and a smart plug.",
-    "fr": "Template de démarrage : capteurs, interrupteur, lampe variable et prise connectée."
+    "en": "Ambient gamma dose rate of the Téléray stations of the ASNR (France), every 10 minutes.",
+    "fr": "Le débit de dose gamma ambiant des balises Téléray de l’ASNR, mesuré toutes les 10 minutes.",
+    "de": "Die Gamma-Ortsdosisleistung der Téléray-Sonden der ASNR (Frankreich), alle 10 Minuten.",
+    "es": "La tasa de dosis gamma ambiental de las balizas Téléray de la ASNR (Francia), cada 10 minutos."
   },
   "version": "1.0.0",
-  "docker_image": "ghcr.io/gladysassistant/integration-template-js:1.0.0",
-  "gladys_version": ">=5.1.0",
-  "cover_image": "https://raw.githubusercontent.com/GladysAssistant/integration-template-js/master/cover.png",
-  "categories": ["lighting", "security", "environment"],
-  "transports": ["local", "cloud"],
+  "docker_image": "ghcr.io/guim31/gladys-teleray:1.0.0",
+  "gladys_version": ">=5.3.0",
+  "cover_image": "https://raw.githubusercontent.com/guim31/gladys-teleray/main/cover.png",
+  "categories": ["environment"],
+  "transports": ["cloud"],
+  "countries": ["FR"],
+  "location": true,
   "config_schema": [
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Getting started", "fr": "Pour commencer" },
+      "label": {
+        "en": "Téléray stations",
+        "fr": "Balises Téléray",
+        "de": "Téléray-Sonden",
+        "es": "Balizas Téléray"
+      },
       "description": {
-        "en": "The demo weather station reads real data from the free Open-Meteo API: pick the coordinates to observe. No account, no API key.",
-        "fr": "La station météo de démonstration lit de vraies données via l'API gratuite Open-Meteo : choisissez les coordonnées à observer. Pas de compte, pas de clé d'API."
+        "en": "Reads the public Téléray map of the ASNR (no account). Data © ASNR. Not an official alert system, and not affiliated with the ASNR.",
+        "fr": "Lit la carte publique Téléray de l’ASNR (sans compte). Données © ASNR. Ce n’est pas un dispositif d’alerte officiel, ni une intégration de l’ASNR.",
+        "de": "Liest die öffentliche Téléray-Karte der ASNR (ohne Konto). Daten © ASNR. Kein offizielles Warnsystem und nicht mit der ASNR verbunden.",
+        "es": "Lee el mapa público Téléray de la ASNR (sin cuenta). Datos © ASNR. No es un sistema de alerta oficial ni está afiliado a la ASNR."
       },
       "links": [
         {
-          "url": "https://open-meteo.com/en/docs",
-          "label": { "en": "Open-Meteo documentation", "fr": "Documentation Open-Meteo" }
+          "url": "https://teleray.asnr.fr",
+          "label": {
+            "en": "Téléray map",
+            "fr": "Carte Téléray",
+            "de": "Téléray-Karte",
+            "es": "Mapa Téléray"
+          }
         }
       ]
     },
     {
-      "key": "latitude",
-      "type": "number",
-      "label": { "en": "Latitude", "fr": "Latitude" },
-      "description": {
-        "en": "Latitude used for the demo weather sensor.",
-        "fr": "Latitude utilisée par le capteur météo de démonstration."
+      "key": "stations",
+      "type": "string",
+      "label": {
+        "en": "Stations",
+        "fr": "Balises",
+        "de": "Sonden",
+        "es": "Balizas"
       },
-      "placeholder": { "en": "e.g. 48.8566", "fr": "ex. 48.8566" },
-      "required": true,
-      "default": 48.8566,
-      "min": -90,
-      "max": 90
+      "description": {
+        "en": "Numbers or names of the stations to follow, separated by commas, 5 at most. Empty: the station closest to your house. The \"Find the stations near a house\" button below lists them.",
+        "fr": "Numéros ou noms des balises à suivre, séparés par des virgules, 5 au plus. Vide : la balise la plus proche de votre maison. Le bouton « Trouver les balises autour d’une maison » ci-dessous les liste.",
+        "de": "Nummern oder Namen der zu verfolgenden Sonden, durch Kommas getrennt, höchstens 5. Leer: die Sonde, die deinem Haus am nächsten ist. Der Button „Sonden um ein Haus finden“ unten listet sie auf.",
+        "es": "Números o nombres de las balizas que desea seguir, separados por comas, 5 como máximo. Vacío: la baliza más cercana a su casa. El botón «Buscar las balizas alrededor de una casa» más abajo las lista."
+      },
+      "placeholder": {
+        "en": "e.g. 1411, TOULOUSE",
+        "fr": "ex. 1411, TOULOUSE",
+        "de": "z. B. 1411, TOULOUSE",
+        "es": "p. ej. 1411, TOULOUSE"
+      },
+      "required": false,
+      "default": ""
     },
     {
-      "key": "longitude",
-      "type": "number",
-      "label": { "en": "Longitude", "fr": "Longitude" },
-      "description": {
-        "en": "Longitude used for the demo weather sensor.",
-        "fr": "Longitude utilisée par le capteur météo de démonstration."
-      },
-      "placeholder": { "en": "e.g. 2.3522", "fr": "ex. 2.3522" },
-      "required": true,
-      "default": 2.3522,
-      "min": -180,
-      "max": 180
-    },
-    {
-      "key": "unit",
+      "key": "language",
       "type": "select",
-      "label": { "en": "Temperature unit", "fr": "Unité de température" },
-      "required": false,
-      "default": "celsius",
-      "options": [
-        { "value": "celsius", "label": { "en": "Celsius", "fr": "Celsius" } },
-        { "value": "fahrenheit", "label": { "en": "Fahrenheit", "fr": "Fahrenheit" } }
-      ]
-    },
-    {
-      "key": "poll_frequency",
-      "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Intervalle de rafraîchissement (s)" },
+      "label": {
+        "en": "Language",
+        "fr": "Langue",
+        "de": "Sprache",
+        "es": "Idioma"
+      },
       "description": {
-        "en": "How often sensors are polled, in seconds (one minute minimum).",
-        "fr": "Fréquence d'interrogation des capteurs, en secondes (une minute minimum)."
+        "en": "Language of the feature names (set when a device is added), of the state texts and of the scene texts.",
+        "fr": "Langue des noms de fonctionnalités (fixés à l’ajout d’un appareil), des textes d’état et des textes de scène.",
+        "de": "Sprache der Funktionsnamen (beim Hinzufügen eines Geräts festgelegt), der Zustandstexte und der Szenentexte.",
+        "es": "Idioma de los nombres de las funciones (fijados al añadir un dispositivo), de los textos de estado y de los textos de escena."
       },
       "required": false,
-      "default": 300,
-      "min": 60,
-      "max": 3600
+      "default": "fr",
+      "options": [
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "Anglais",
+            "de": "Englisch",
+            "es": "Inglés"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "French",
+            "fr": "Français",
+            "de": "Französisch",
+            "es": "Francés"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "German",
+            "fr": "Allemand",
+            "de": "Deutsch",
+            "es": "Alemán"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Spanish",
+            "fr": "Espagnol",
+            "de": "Spanisch",
+            "es": "Español"
+          }
+        }
+      ]
     }
   ],
   "actions": [
     {
-      "key": "test_weather",
-      "label": { "en": "Test the weather provider", "fr": "Tester le fournisseur météo" },
-      "timeout_seconds": 30
-    },
-    {
-      "key": "identify",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
+      "key": "find_nearby",
+      "label": {
+        "en": "Find the stations near a house",
+        "fr": "Trouver les balises autour d’une maison",
+        "de": "Sonden um ein Haus finden",
+        "es": "Buscar las balizas alrededor de una casa"
+      },
+      "timeout_seconds": 30,
       "fields": [
         {
-          "key": "device",
+          "key": "house",
           "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
+          "source": "houses",
+          "label": {
+            "en": "House",
+            "fr": "Maison",
+            "de": "Haus",
+            "es": "Casa"
+          },
+          "description": {
+            "en": "Its location is set in Settings → Houses. Empty: the first located house.",
+            "fr": "Sa position se règle dans Paramètres → Maisons. Vide : la première maison située.",
+            "de": "Sein Standort wird unter Einstellungen → Häuser festgelegt. Leer: das erste Haus mit Standort.",
+            "es": "Su ubicación se define en Ajustes → Casas. Vacío: la primera casa con ubicación."
+          },
+          "required": false
         }
       ]
     }
   ],
   "scene_triggers": [
     {
-      "key": "motion_detected",
-      "label": { "en": "Motion detected", "fr": "Mouvement détecté" },
+      "key": "dose_above_background",
+      "label": {
+        "en": "Dose rate above background",
+        "fr": "Débit de dose au-dessus du bruit de fond",
+        "de": "Dosisleistung über dem Untergrund",
+        "es": "Tasa de dosis por encima del fondo"
+      },
       "description": {
-        "en": "A demo motion sensor saw a person or an animal move.",
-        "fr": "Un détecteur de démonstration a vu bouger une personne ou un animal."
+        "en": "A validated or pending measurement exceeds the background level of the station by the chosen margin. Fired once when it is crossed.",
+        "fr": "Une mesure validée ou en attente dépasse le bruit de fond de la balise de la marge choisie. Déclenché une fois, au franchissement.",
+        "de": "Eine validierte oder ausstehende Messung übersteigt den Untergrund der Sonde um den gewählten Abstand. Einmal ausgelöst, beim Überschreiten.",
+        "es": "Una medición validada o pendiente supera el fondo natural de la baliza en el margen elegido. Se activa una vez, al superarlo."
       },
       "fields": [
         {
           "key": "device",
           "type": "select",
           "source": "devices",
-          "label": { "en": "Sensor", "fr": "Détecteur" }
+          "label": {
+            "en": "Station",
+            "fr": "Balise",
+            "de": "Sonde",
+            "es": "Baliza"
+          },
+          "description": {
+            "en": "Empty: any station.",
+            "fr": "Vide : n’importe quelle balise.",
+            "de": "Leer: jede Sonde.",
+            "es": "Vacío: cualquier baliza."
+          },
+          "required": false
         },
         {
-          "key": "target",
-          "type": "multi_select",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" },
+          "key": "margin",
+          "type": "select",
+          "label": {
+            "en": "Margin above background",
+            "fr": "Marge au-dessus du bruit de fond",
+            "de": "Abstand über dem Untergrund",
+            "es": "Margen sobre el fondo"
+          },
+          "description": {
+            "en": "40 nSv/h is the threshold of the ASNR map. Rain can add 20 to 50 nSv/h for a few hours.",
+            "fr": "40 nSv/h est le seuil de la carte de l’ASNR. La pluie peut ajouter 20 à 50 nSv/h pendant quelques heures.",
+            "de": "40 nSv/h ist die Schwelle der ASNR-Karte. Regen kann für einige Stunden 20 bis 50 nSv/h hinzufügen.",
+            "es": "40 nSv/h es el umbral del mapa de la ASNR. La lluvia puede añadir de 20 a 50 nSv/h durante unas horas."
+          },
+          "required": true,
           "options": [
-            { "value": "person", "label": { "en": "Person", "fr": "Personne" } },
-            { "value": "animal", "label": { "en": "Animal", "fr": "Animal" } }
+            {
+              "value": "20",
+              "label": {
+                "en": "+20 nSv/h",
+                "fr": "+20 nSv/h",
+                "de": "+20 nSv/h",
+                "es": "+20 nSv/h"
+              }
+            },
+            {
+              "value": "40",
+              "label": {
+                "en": "+40 nSv/h",
+                "fr": "+40 nSv/h",
+                "de": "+40 nSv/h",
+                "es": "+40 nSv/h"
+              }
+            },
+            {
+              "value": "100",
+              "label": {
+                "en": "+100 nSv/h",
+                "fr": "+100 nSv/h",
+                "de": "+100 nSv/h",
+                "es": "+100 nSv/h"
+              }
+            },
+            {
+              "value": "200",
+              "label": {
+                "en": "+200 nSv/h",
+                "fr": "+200 nSv/h",
+                "de": "+200 nSv/h",
+                "es": "+200 nSv/h"
+              }
+            }
           ]
         }
       ],
       "variables": [
         {
-          "key": "target",
+          "key": "station_name",
           "type": "string",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" }
+          "label": {
+            "en": "Station name",
+            "fr": "Nom de la balise",
+            "de": "Name der Sonde",
+            "es": "Nombre de la baliza"
+          }
+        },
+        {
+          "key": "dose_rate",
+          "type": "number",
+          "label": {
+            "en": "Dose rate (nSv/h)",
+            "fr": "Débit de dose (nSv/h)",
+            "de": "Dosisleistung (nSv/h)",
+            "es": "Tasa de dosis (nSv/h)"
+          }
+        },
+        {
+          "key": "background",
+          "type": "number",
+          "label": {
+            "en": "Background level (nSv/h)",
+            "fr": "Bruit de fond (nSv/h)",
+            "de": "Untergrund (nSv/h)",
+            "es": "Fondo natural (nSv/h)"
+          }
+        },
+        {
+          "key": "excess",
+          "type": "number",
+          "label": {
+            "en": "Above background (nSv/h)",
+            "fr": "Au-dessus du bruit de fond (nSv/h)",
+            "de": "Über dem Untergrund (nSv/h)",
+            "es": "Por encima del fondo (nSv/h)"
+          }
+        },
+        {
+          "key": "measured_at",
+          "type": "string",
+          "label": {
+            "en": "Measurement time (UTC)",
+            "fr": "Heure de la mesure (UTC)",
+            "de": "Messzeit (UTC)",
+            "es": "Hora de la medición (UTC)"
+          }
+        }
+      ]
+    },
+    {
+      "key": "dose_back_to_normal",
+      "label": {
+        "en": "Dose rate back to normal",
+        "fr": "Débit de dose revenu à la normale",
+        "de": "Dosisleistung wieder normal",
+        "es": "Tasa de dosis de nuevo normal"
+      },
+      "description": {
+        "en": "After a \"Dose rate above background\", the dose rate is less than 10 nSv/h above the background again.",
+        "fr": "Après un « Débit de dose au-dessus du bruit de fond », le débit est de nouveau à moins de 10 nSv/h du bruit de fond.",
+        "de": "Nach einer „Dosisleistung über dem Untergrund“ liegt die Dosisleistung wieder weniger als 10 nSv/h über dem Untergrund.",
+        "es": "Tras una «Tasa de dosis por encima del fondo», la tasa vuelve a estar a menos de 10 nSv/h del fondo."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Station",
+            "fr": "Balise",
+            "de": "Sonde",
+            "es": "Baliza"
+          },
+          "description": {
+            "en": "Empty: any station.",
+            "fr": "Vide : n’importe quelle balise.",
+            "de": "Leer: jede Sonde.",
+            "es": "Vacío: cualquier baliza."
+          },
+          "required": false
+        }
+      ],
+      "variables": [
+        {
+          "key": "station_name",
+          "type": "string",
+          "label": {
+            "en": "Station name",
+            "fr": "Nom de la balise",
+            "de": "Name der Sonde",
+            "es": "Nombre de la baliza"
+          }
+        },
+        {
+          "key": "dose_rate",
+          "type": "number",
+          "label": {
+            "en": "Dose rate (nSv/h)",
+            "fr": "Débit de dose (nSv/h)",
+            "de": "Dosisleistung (nSv/h)",
+            "es": "Tasa de dosis (nSv/h)"
+          }
+        },
+        {
+          "key": "background",
+          "type": "number",
+          "label": {
+            "en": "Background level (nSv/h)",
+            "fr": "Bruit de fond (nSv/h)",
+            "de": "Untergrund (nSv/h)",
+            "es": "Fondo natural (nSv/h)"
+          }
         }
       ]
     }
   ],
   "scene_actions": [
     {
-      "key": "identify_device",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "description": {
-        "en": "Make a device signal itself (the demo light blinks).",
-        "fr": "Fait se signaler un appareil (la lampe de démonstration clignote)."
+      "key": "get_dose_rate",
+      "label": {
+        "en": "Get the dose rate of a station",
+        "fr": "Obtenir le débit de dose d’une balise",
+        "de": "Dosisleistung einer Sonde abrufen",
+        "es": "Obtener la tasa de dosis de una baliza"
       },
-      "timeout_seconds": 15,
+      "description": {
+        "en": "Its last measurement, with a sentence ready for a notification.",
+        "fr": "Sa dernière mesure, avec une phrase prête pour une notification.",
+        "de": "Die letzte Messung der Sonde, mit einem fertigen Satz für eine Benachrichtigung.",
+        "es": "Su última medición, con una frase lista para una notificación."
+      },
+      "timeout_seconds": 10,
       "fields": [
         {
-          "key": "device",
+          "key": "station",
           "type": "select",
           "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
+          "label": {
+            "en": "Station",
+            "fr": "Balise",
+            "de": "Sonde",
+            "es": "Baliza"
+          },
           "required": true
         }
       ],
       "outputs": [
         {
-          "key": "signalled",
-          "type": "boolean",
-          "label": { "en": "Device signalled", "fr": "Appareil signalé" }
+          "key": "summary",
+          "type": "string",
+          "label": {
+            "en": "Summary",
+            "fr": "Résumé",
+            "de": "Zusammenfassung",
+            "es": "Resumen"
+          }
+        },
+        {
+          "key": "dose_rate",
+          "type": "number",
+          "label": {
+            "en": "Dose rate (nSv/h)",
+            "fr": "Débit de dose (nSv/h)",
+            "de": "Dosisleistung (nSv/h)",
+            "es": "Tasa de dosis (nSv/h)"
+          }
+        },
+        {
+          "key": "mean_24h",
+          "type": "number",
+          "label": {
+            "en": "24 h average (nSv/h)",
+            "fr": "Moyenne 24 h (nSv/h)",
+            "de": "24-h-Mittel (nSv/h)",
+            "es": "Media 24 h (nSv/h)"
+          }
+        },
+        {
+          "key": "background",
+          "type": "number",
+          "label": {
+            "en": "Background level (nSv/h)",
+            "fr": "Bruit de fond (nSv/h)",
+            "de": "Untergrund (nSv/h)",
+            "es": "Fondo natural (nSv/h)"
+          }
+        },
+        {
+          "key": "measured_at",
+          "type": "string",
+          "label": {
+            "en": "Measurement time (UTC)",
+            "fr": "Heure de la mesure (UTC)",
+            "de": "Messzeit (UTC)",
+            "es": "Hora de la medición (UTC)"
+          }
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "label": {
+            "en": "State (validated, not_validated, invalidated, no_recent)",
+            "fr": "État (validated, not_validated, invalidated, no_recent)",
+            "de": "Zustand (validated, not_validated, invalidated, no_recent)",
+            "es": "Estado (validated, not_validated, invalidated, no_recent)"
+          }
         }
       ]
     }
   ],
   "widgets": [
     {
-      "key": "demo_status",
-      "label": { "en": "Demo status", "fr": "État de la démo" },
+      "key": "station_dose",
+      "label": {
+        "en": "Téléray dose rate",
+        "fr": "Débit de dose Téléray",
+        "de": "Téléray-Dosisleistung",
+        "es": "Tasa de dosis Téléray"
+      },
       "description": {
-        "en": "Live temperature and plug power, plug connection and observed location.",
-        "fr": "Température et puissance en direct, connexion de la prise, position observée."
+        "en": "The dose rate of a station, its 24 h curve and its background level.",
+        "fr": "Le débit de dose d’une balise, sa courbe sur 24 h et son bruit de fond.",
+        "de": "Die Dosisleistung einer Sonde, ihre 24-h-Kurve und ihr Untergrund.",
+        "es": "La tasa de dosis de una baliza, su curva de 24 h y su fondo natural."
       },
       "icon": "activity",
-      "action_timeout_seconds": 15
+      "settings": [
+        {
+          "key": "station",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Station",
+            "fr": "Balise",
+            "de": "Sonde",
+            "es": "Baliza"
+          },
+          "description": {
+            "en": "Empty: the first station added.",
+            "fr": "Vide : la première balise ajoutée.",
+            "de": "Leer: die erste hinzugefügte Sonde.",
+            "es": "Vacío: la primera baliza añadida."
+          },
+          "required": false
+        },
+        {
+          "key": "show_chart",
+          "type": "boolean",
+          "label": {
+            "en": "Show the 24 h curve",
+            "fr": "Afficher la courbe 24 h",
+            "de": "24-h-Kurve anzeigen",
+            "es": "Mostrar la curva de 24 h"
+          },
+          "required": false,
+          "default": true
+        },
+        {
+          "key": "show_status",
+          "type": "boolean",
+          "label": {
+            "en": "Show the time and state",
+            "fr": "Afficher l’heure et l’état",
+            "de": "Zeit und Zustand anzeigen",
+            "es": "Mostrar la hora y el estado"
+          },
+          "required": false,
+          "default": true
+        }
+      ]
     }
   ]
 }

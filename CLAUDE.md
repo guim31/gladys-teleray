@@ -31,16 +31,23 @@ pushing.
 ## Architecture
 
 ```
-index.js                          SDK wiring only: handlers registered before connect()
-src/devices/index.js              registry of the device blueprints + dispatch helpers
-src/devices/<type>.js             one device type per file (buildDevice, onPoll, onSetValue...)
-src/scenes.js                     scene action handlers (manifest `scene_actions`)
-src/widgets.js                    dashboard widget handlers (manifest `widgets`)
+index.js                          SDK wiring only (src/app.js registers the handlers)
+src/app.js                        handlers: connection, discovery, device created, action, scene action, widget
+src/hub.js                        station list, followed stations, 24 h of measurements, states, scene events
+src/dose.js                       pure rules: validity codes, freshness, 24 h average, margins above background
+src/api.js                        client of the Téléray map backend (stations, measures), distances
+src/poller.js                     the container's 10-minute timer (devices are published should_poll: false)
+src/devices.js                    the station device: features (keys are forever)
+src/actions.js                    "Find the stations near a house" (manifest `actions`)
+src/scenes.js                     scene action handler (manifest `scene_actions`)
+src/widgets.js                    dashboard widget handler (manifest `widgets`)
+src/i18n.js                       every text, en/fr/de/es
 src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
-src/weather.js                    example driver (Open-Meteo)
+src/store.js, src/issues.js       /data persistence (atomic writes), repeated failures logged once
 gladys-assistant-integration.json manifest: name, config_schema, actions, image...
-docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
+docs/en.md, fr.md, de.md, es.md   user documentation, re-hosted by Gladys (mandatory)
 test/                             node --test, against the SDK's fake Gladys (integration-sdk/testing)
+test/fixtures/api/                real answers of the Téléray map (29/10/2026)
 .github/scripts/release.mjs       release helpers (manifest bump, changelog), tested in test/
 ```
 
@@ -70,8 +77,9 @@ test/                             node --test, against the SDK's fake Gladys (in
   `type: "provider"`: 5.1.0). `test/manifest.test.js` ties the manifest to the
   code (defaults, action, scene and widget handlers): change both sides
   together.
-- **User-facing text** is bilingual (English and French): action messages,
-  manifest texts, and `docs/en.md` / `docs/fr.md`, kept in sync.
+- **User-facing text** exists in English, French, German and Spanish: action
+  messages, manifest texts, widget texts, feature names, and the four docs
+  `docs/{en,fr,de,es}.md`, kept in sync (`test/i18n.test.js`).
 - **Style.** Prettier formats, ESLint catches mistakes. Comments explain why,
   in English. Tests never touch the network.
 
@@ -250,3 +258,32 @@ long, et sur un « Sie »/« Ihr… » de politesse en allemand. Le store exige 
 - Docs `en`, `fr`, `de`, `es` avec les mêmes sections.
 - Chauffe, ouverture, sécurité : ne rien rendre pilotable « comme un thermostat » ou par un assistant
   vocal quand une erreur serait dangereuse (leçon d'OctoPrint).
+
+## Téléray (propre à cette intégration)
+
+Relevé sur la carte publique le 29/10/2026 (captures dans `test/fixtures/api/`).
+
+- **Pas de jeu open data** des mesures Téléray (data.gouv.fr n'a que les prélèvements annuels de l'ASNR). La carte
+  https://teleray.asnr.fr (Kalisio) sert sa propre API Feathers **sans jeton** : `GET /api/stations?$limit=1000`
+  (479 balises, GeoJSON) et `GET /api/measures?properties.name=…&time[$gte]=ISO&$sort[time]=1&$limit=200`. Le jeton
+  `planetTokens` de `/api/capabilities` ne sert pas ici. Aucun contrat d'API publié : l'API peut changer.
+- La chaîne de requête **n'est pas typée** côté serveur : `properties.irsnId=1411` ne trouve rien (comparé comme
+  chaîne), d'où le filtre sur `properties.name` (nom technique, ex. `TOULOUSE_31_AGG_CP`). `$select` vide les
+  `features` : ne pas s'en servir.
+- Champs utiles : `doseRateRaw` (nSv/h, entier, ce qu'affiche la carte publique), `bruitdefond` (bruit de fond de la
+  balise, décimal), `doseRateNet` (brut − bruit de fond, plancher 0), `libelle` (VA/VM validée, NV/NVM pas encore,
+  NVA invalidée), `measState`. Une mesure toutes les 10 min, visible 20 à 40 min plus tard ; les spectromètres
+  (`Spectrometre_Gamma`) avec plusieurs heures de retard.
+- Règles de la carte reprises : mesure « ancienne » au-delà de 2 h ; balise « en dépassement » quand
+  `doseRateRaw >= bruitdefond + 40` (constante `min(40, 114)` du code de la carte), d'où la marge +40 par défaut.
+- Gladys n'a ni catégorie ni unité de radioactivité : `unknown/unknown`, unité dans le nom (trois sur l'appareil,
+  donc le tableau de bord affiche les noms). Les tuiles du widget sont statiques pour porter l'unité `nSv/h`.
+- Conditions : données publiques d'un organisme public (CRPA, réutilisation libre avec mention de la source) ; les
+  mentions légales du site citent la source « ASNR ». Charge : une requête par balise toutes les 10 min, la liste une
+  fois par jour, `User-Agent` explicite.
+- Faux Gladys du SDK : l'ack d'un widget enveloppe le contenu dans `data.content`.
+- La validité d'une mesure change après coup (NV → VA ou NVA) : chaque lecture redemande les 3 dernières heures
+  (`REVALIDATE_MS`) et remplace par date. Une mesure datée de plus de 15 min dans le futur est jetée (elle figerait
+  la balise). Douze sites nucléaires ont un compteur et un spectromètre sous le même `publicName` (CHINON 1144 et 6006) : le nom désigne le compteur, le numéro l'autre ; le spectromètre porte « γ » dans son nom d'appareil.
+- Quatre balises de la liste réelle ont leurs coordonnées en objet `{ "0": lon, "1": lat }` (BASTIA, MENDE, MEYSSE,
+  ROUSSY-LE-VILLAGE) : vu seulement en lançant l'image contre la vraie carte.

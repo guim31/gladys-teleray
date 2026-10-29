@@ -1,0 +1,328 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [139.727, 35.647] },
+      "properties": {
+        "name": "TOKYO-JAPON_ET_AGG_CP",
+        "irsnId": 1000,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "AMBASSADE",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "TOKYO-JAPON",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f157807f"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-52.324, 4.92] },
+      "properties": {
+        "name": "CAYENNE-GUYANE_973_AGG_CP",
+        "irsnId": 1004,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "CAYENNE-GUYANE",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f1578082"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [2.377, 48.84] },
+      "properties": {
+        "name": "PARIS-BERCY_75_AGG_CP",
+        "irsnId": 1013,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "PARIS-BERCY",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f157808c"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [2.343, 48.887] },
+      "properties": {
+        "name": "PARIS-SACRE-COEUR_75_AGG_CP",
+        "irsnId": 1015,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "PARIS-SACRE-COEUR",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f157808d"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [2.295, 48.858] },
+      "properties": {
+        "name": "PARIS-TOUR-EIFFEL_75_AGG_CP",
+        "irsnId": 1021,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "PARIS-TOUR-EIFFEL",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f1578093"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [2.252, 48.842] },
+      "properties": {
+        "name": "PARIS-PARC-DES-PRINCES_92_AGG_CP",
+        "irsnId": 1027,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "PARIS-PARC-DES-PRINCES",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f1578099"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [4.844, 45.76] },
+      "properties": {
+        "name": "LYON_69_AGG_CP",
+        "irsnId": 1036,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "LYON",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f15780a2"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [0.595, 43.64] },
+      "properties": {
+        "name": "AUCH_32_AGG_CP",
+        "irsnId": 1344,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "AUCH",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f15781af"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-0.587, 44.837] },
+      "properties": {
+        "name": "BORDEAUX_33_AGG_CP",
+        "irsnId": 1351,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "BORDEAUX",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f15781b5"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [1.357, 44.016] },
+      "properties": {
+        "name": "MONTAUBAN_82_AGG_CP",
+        "irsnId": 1390,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "MONTAUBAN",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f15781db"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [1.45, 43.598] },
+      "properties": {
+        "name": "TOULOUSE_31_AGG_CP",
+        "irsnId": 1411,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "TOULOUSE",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f15781f0"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [5.923, 43.127] },
+      "properties": {
+        "name": "TOULON-ARSENAL-BSL_83_SIT_CP",
+        "irsnId": 1437,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "INB",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "TOULON-ARSENAL-BSL",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f157820a"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [2.352, 48.857] },
+      "properties": {
+        "name": "PARIS-HOTEL-DE-VILLE_75_AGG_CP",
+        "irsnId": 1617,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "PARIS-HOTEL-DE-VILLE",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f1578280"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [2.289, 48.831] },
+      "properties": {
+        "name": "PARIS-PARC-DES-EXPOSITIONS_75_AGG_CP",
+        "irsnId": 1619,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "PARIS-PARC-DES-EXPOSITIONS",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f1578281"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [-0.56, 44.897] },
+      "properties": {
+        "name": "BORDEAUX-STADE-ATLANTIQUE_33_AGG_CP",
+        "irsnId": 1620,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "BORDEAUX-STADE-ATLANTIQUE",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f1578282"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [2.307, 48.877] },
+      "properties": {
+        "name": "PARIS-COURCELLES_75_AGG_CP",
+        "irsnId": 1635,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "PARIS-COURCELLES",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f1578289"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [2.391, 48.896] },
+      "properties": {
+        "name": "PARIS-LA-VILLETTE_75_AGG_CP",
+        "irsnId": 1638,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "NATIONAL",
+        "statut": "FIXE",
+        "type": "Compteur_Proportionnel",
+        "publicName": "PARIS-LA-VILLETTE",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f157828a"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [4.731, 44.322] },
+      "properties": {
+        "name": "TRICASTIN_26_AS1_SP",
+        "irsnId": 6001,
+        "owner": "IRSN",
+        "reseau": "TELERAY",
+        "strategie": "INB",
+        "statut": "FIXE",
+        "type": "Spectrometre_Gamma",
+        "publicName": "TRICASTIN",
+        "validated": true
+      },
+      "_id": "681b5798ed2931b0f157821f"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "coordinates": { "0": 9.4472723, "1": 42.703091 }, "type": "Point" },
+      "properties": {
+        "irsnId": 1347,
+        "name": "BASTIA_2B_AGG_CP",
+        "owner": "IRSN",
+        "publicName": "BASTIA",
+        "reseau": "TELERAY",
+        "statut": "FIXE",
+        "strategie": "NATIONAL",
+        "type": "Compteur_Proportionnel",
+        "validated": true
+      },
+      "_id": "6a46289d10967225a67f46ee"
+    },
+    {
+      "type": "Feature",
+      "geometry": { "coordinates": { "0": 3.4979529, "1": 44.51775 }, "type": "Point" },
+      "properties": {
+        "irsnId": 1387,
+        "name": "MENDE_48_AGG_CP",
+        "owner": "IRSN",
+        "publicName": "MENDE",
+        "reseau": "TELERAY",
+        "statut": "FIXE",
+        "strategie": "NATIONAL",
+        "type": "Compteur_Proportionnel",
+        "validated": true
+      },
+      "_id": "69c2943b7a770a144e676163"
+    }
+  ],
+  "total": 20,
+  "skip": 0,
+  "limit": 600
+}
